@@ -1,0 +1,14 @@
+# OS
+.DS_Store
+
+# Compiled Source
+*.o
+*.d
+*.map
+*.elf
+*.nds
+_DS_MENU.DAT
+
+# Other
+/util/pack
+/build
