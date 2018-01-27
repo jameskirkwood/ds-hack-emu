@@ -10,9 +10,9 @@ This software is published under the MIT licence (see [LICENCE](LICENCE)).
 
 You will need either a physical NDS and means of launching unsigned code on it, or an NDS emulator, in order to run the Hack emulator. If you want to run the emulator in an emulator, I recommend DeSmuME.
 
-The prebuilt executable will run a small program that draws stripes on the screen.
-
 ## Building
+
+You will need the devkitPro + devkitARM + libnds toolchain for Nintendo DS homebrew development in order to build this project. Installation instructions can be found at [https://devkitpro.org/wiki/Getting_Started](https://devkitpro.org/wiki/Getting_Started).
 
 Currently the emulator will run a single program linked into the final executable, as this makes it easy to test with an NDS emulator. Once you have a program in .hack format (text encoded binary), follow the steps below to build the .nds executable:
 
@@ -34,6 +34,8 @@ Currently the emulator will run a single program linked into the final executabl
   ```bash
   make
   ```
+
+The included `data/rom.bin` is a simple program that draws stripes on the screen.
 
 ## Design
 
