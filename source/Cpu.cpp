@@ -2,6 +2,7 @@
 
 #include "Cpu.h"
 #include "Kbd.h"
+#include "EmuScreen.h"
 
 Cpu CPU;
 
@@ -29,8 +30,11 @@ void Cpu::tick() {
 
 			u16 opy = ra;
 			if (inst & (1 << 12)) {
-				if (ra < (3 << 13)) opy = ram[ra];
-				else if (ra == (3 << 13)) {
+				if (ra < (16 << 10)) opy = ram[ra];
+				else if (ra < (24 << 10)) {
+					opy = EmuScreen::read(ra - (16 << 10));
+				}
+				else if (ra == (24 << 10)) {
 					opy = KBD.read();
 					keyboard_read = true;
 				}
@@ -47,7 +51,12 @@ void Cpu::tick() {
 			else if ((inst & (1 << 1)) &&             res == 0) pc = ra;
 			else if ((inst & (1 << 2)) &&    (res & (1 << 15))) pc = ra;
 
-			if ((inst & (1 << 3)) && ra < (24 << 10)) ram[ra] = res;
+			if (inst & (1 << 3)) {
+				if (ra < (16 << 10)) ram[ra] = res;
+				else if (ra < (24 << 10)) {
+					EmuScreen::write(ra - (16 << 10), res);
+				}
+			}
 			if (inst & (1 << 5)) ra = res;
 			if (inst & (1 << 4)) rd = res;
 

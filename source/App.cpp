@@ -1,7 +1,7 @@
 #include <nds.h>
 
 #include "App.h"
-#include "Vid.h"
+#include "EmuScreen.h"
 #include "Kbd.h"
 #include "Cpu.h"
 
@@ -11,7 +11,11 @@ App APP;
 
 void App::init() {
 
-	VID.init();
+	vramSetBankA(VRAM_A_MAIN_BG); // 128 kB at base of main background memory
+	lcdMainOnTop();
+	powerOn(POWER_ALL_2D);
+	EmuScreen::set_main();
+
 	KBD.init();
 	CPU.init();
 
@@ -40,7 +44,7 @@ void App::draw() {
 
 	cpuStartTiming(0);
 
-	VID.draw();
+	EmuScreen::draw();
 
 	cpuEndTiming();
 	draw_cpu_time = (draw_cpu_time * 3 + cpuGetTiming()) >> 2;
@@ -48,6 +52,4 @@ void App::draw() {
 	console.clear();
 	console << "Emulator CPU: " << CONSOLE_CYAN << (tick_cpu_time * 100 / 560190) << "%\n" << CONSOLE_WHITE;
 	console << "Renderer CPU: " << CONSOLE_CYAN << (draw_cpu_time * 100 / 560190) << "%\n" << CONSOLE_WHITE;
-	console << "\n";
-	console << "Renderer Load: " << CONSOLE_CYAN << VID.frame_strips << CONSOLE_WHITE;
 }
