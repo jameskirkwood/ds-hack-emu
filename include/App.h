@@ -15,8 +15,10 @@ public:
 	void tick();
 	void draw();
 
+	void run();
+
 	int draw_cpu_time;
-	int tick_cpu_time;
+	int cpu_ips;
 };
 
 extern App APP;

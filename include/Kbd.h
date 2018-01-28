@@ -9,9 +9,6 @@ private:
 
 public:
 
-	void init();
-	void tick();
-
 	u16 read();
 };
 

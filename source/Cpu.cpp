@@ -6,23 +6,31 @@
 
 Cpu CPU;
 
-void Cpu::init() {
-
-	pc = ra = rd = 0;
-	cycles_due = 0;
-}
-
 void Cpu::tick() {
 
-	cycles_due += cycles_per_frame;
+	mibicycles_last_tick = mibicycles_planned - mibicycles_due;
 
-	while (cycles_due-- > 0) {
+	// Schedule cycles unless overloaded
+	if (mibicycles_due < mibicycles_per_tick) {
+		mibicycles_due += mibicycles_per_tick;
+	}
 
-		bool keyboard_read = false;
+	mibicycles_planned = mibicycles_due;
+}
 
+void Cpu::run() {
+
+	while (mibicycles_due > 0) {
+
+		// Fetch
 		u16 inst = rom[pc++];
 
 		if (inst & (1 << 15)) {
+
+			// C instruction
+
+			// Detect reads from the keyboard register
+			bool keyboard_read = false;
 
 			u16 opx = rd;
 			if (inst & (1 << 11)) opx = 0;
@@ -60,17 +68,17 @@ void Cpu::tick() {
 			if (inst & (1 << 5)) ra = res;
 			if (inst & (1 << 4)) rd = res;
 
-			if (keyboard_read && cycles_due < cycles_per_frame) break;
+			// Attempt to synchronise frames with keyboard register reads
+			// (Overdue cycles are postponed until the next tick)
+			if (keyboard_read && mibicycles_due < mibicycles_per_tick) break;
 		}
 		else {
+
+			// A instruction
 			ra = inst;
 		}
 
-		if (REG_VCOUNT == 191) break;
+		// One cycle elapsed
+		mibicycles_due -= 1024;
 	}
-}
-
-void Cpu::setfreq(int f) {
-
-	cycles_per_frame = f / 60;
 }

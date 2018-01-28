@@ -2,8 +2,9 @@
 
 #include <nds.h>
 
-u16 EmuScreen::vram[8 << 10];
-bool EmuScreen::dirty_line[128];
+volatile u16 EmuScreen::vram[8 << 10];
+volatile bool EmuScreen::dirty_line[128];
+
 int EmuScreen::bg_id;
 
 #define GET_BIT(x, i) (((x) >> i) & 1)
@@ -28,7 +29,7 @@ void EmuScreen::set_main() {
 	bgShow(bg_id);
 
 	for (int i = 0; i < (8 << 10); i++) vram[i] = 0;
-	for (int i = 0; i < 128; i++) dirty_line[i] = 0;
+	for (int i = 0; i < 128; i++) dirty_line[i] = true;
 }
 
 void EmuScreen::draw() {
@@ -40,7 +41,7 @@ void EmuScreen::draw() {
 
 			for (int j = 0; j < 32; j++) {
 
-				u16 *source = vram + (i << 6) + j;
+				vu16 *source = vram + (i << 6) + j;
 
 				u16 top_dots = ~source[0];
 				u16 btm_dots = ~source[32];

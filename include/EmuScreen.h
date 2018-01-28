@@ -10,8 +10,9 @@ class EmuScreen {
 
 private:
 
-	static u16 vram[256 * 32];
-	static bool dirty_line[128];
+	static volatile u16 vram[256 * 32];
+	static volatile bool dirty_line[128];
+
 	static int bg_id;
 
 public:
